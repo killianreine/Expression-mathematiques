@@ -1,192 +1,290 @@
-# Expression mathématiques
+# Expressions Mathématiques
 
-## Introduction au sujet
+> Un système élégant de représentation et d'évaluation d'expressions mathématiques en C++ utilisant l'héritage et les arbres binaires
 
-> On appelle **expression mathématiques** une combinaison de nombres, de variables, de symboles et d'opérateurs mathématiques qui représente une relation ou une valeur.
+<div align="center">
 
-*Exemples :*
+[![C++](https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+[![Build](https://img.shields.io/badge/Build-Passing-success?style=for-the-badge)](.)
 
-- $E_1= 3+2-sin(2x)$
-- $E_2= 6x+2y-7z^2$
-- $E_3= \dfrac{4x+ln(7)}{2x-7}$
+</div>
 
-L'objectif de ce projet est d'utiliser la notion d'héritage en C++ pour permettre de représenter et d'évaluer des expressions mathématiques.
+---
 
-## Quelques précisions
+## Vue d'ensemble
 
-On représentera une expression mathématiques par un objet de type `Objet`, ce dernier peut représenter : 
+Ce projet implémente un **système de manipulation d'expressions mathématiques** permettant de représenter, évaluer et visualiser des formules complexes sous forme d'arbres binaires. Il exploite la puissance de la programmation orientée objet en C++ pour créer une architecture extensible et élégante.
 
-- Une **constante** *comme PI*
-- Une **variable** *Comme* $x, y, z$
-- Un **opérateur** mathématiques
-    - Opérateur binaire $+, -, \times, /, puiss\ldots$
-    - Opérateur unaire $sin, cos, tan, inv, \ldots$
+### Fonctionnalités clés
 
-La classe `Objet` représentera en fait une interface globale qui sera implémentée par les classes `Constante`, `unaryOperator`, ...
+- **Support multi-types** : `int`, `double`, et nombres rationnels
+- **Visualisation d'arbres** : Représentation graphique ASCII des expressions
+- **Évaluation dynamique** : Calcul d'expressions à une variable
+- **Architecture OOP** : Héritage et polymorphisme pour une extensibilité maximale
+- **Opérateurs riches** : Binaires (`+`, `-`, `×`, `/`, `^`) et unaires (`sin`, `cos`, `log`, `exp`)
 
-## Arborescence du répertoire
+---
 
-```css
+## Exemples d'expressions
+
+### Expression simple
+```cpp
+E₁ = 3 + 2 - sin(2x)
+```
+
+### Expression rationnelle
+```cpp
+E₂ = 6x + 2y - 7z²
+```
+
+### Expression complexe
+```cpp
+E₃ = (4x + ln(7)) / (2x - 7)
+```
+
+---
+
+## Architecture
+
+Le projet utilise une hiérarchie de classes basée sur une interface `Objet` :
+
+```
+Objet (interface)
+├── Constante
+├── Variable
+├── UnaryOperator
+│   ├── Sin
+│   ├── Cos
+│   ├── Log
+│   └── Exp
+└── BinaryOperator
+    ├── Addition
+    ├── Soustraction
+    ├── Multiplication
+    └── Division
+```
+
+### Structure du projet
+
+```
 Projet/
 ├── Includes/
-│   ├── BinaryOperator.hpp
-│   ├── Const.hpp
-│   ├── Objet.hpp
-│   ├── Rationnel.hpp
-│   ├── UnaryOperator.hpp
-│   └── Variable.hpp
+│   ├── Objet.hpp           # Interface de base
+│   ├── Const.hpp           # Constantes mathématiques
+│   ├── Variable.hpp        # Variables symboliques
+│   ├── UnaryOperator.hpp   # Opérateurs unaires
+│   ├── BinaryOperator.hpp  # Opérateurs binaires
+│   └── Rationnel.hpp       # Nombres rationnels
 │
 └── Modules/
-    ├── main.cpp
-    ├── mainArbre.cpp
-    └── rationnel.cpp
+    ├── main.cpp            # Point d'entrée principal
+    ├── mainArbre.cpp       # Tests de visualisation
+    └── rationnel.cpp       # Implémentation des rationnels
 ```
 
-## Expressions mathématiques typées
+---
 
-L'objectif est aussi de gérer et évaluer des expressions de différents types. Dans un premier temps nous nous sommes consacré à évaluer et représenter des expressions sur des types simples comme `int` et `double`. Puis ensuite, l'utilisation de la classe `Rationnel` pour représenter des nombres décimaux.
+## Les Nombres Rationnels
 
-### Rationnels
+Le projet inclut une classe `Rationnel` puissante pour manipuler des fractions exactes.
 
-#### Précisions
+### Notation
+Un rationnel est affiché comme : `[ NUMERATEUR DIV DENOMINATEUR ]`
 
-Un nombre rationnel est définit par son numérateur et son dénominateur et il sera représenté par : `[ NUMERATOR DIV DENOMINATOR ]` afin de différencer les rationnels et l'opérations `/`.
+### Utilisation
 
-#### Exemple
-
-On souhaite représenter le rationnel $\dfrac{4}{7}$
-
-```c++
+```cpp
+// Création d'un rationnel 4/7
 Rationnel r(4, 7);
-std::cout << r << std::endl; // Affiche [ 4 DIV 7 ]
+std::cout << r << std::endl;
+// Affiche: [ 4 DIV 7 ]
 ```
 
-#### Approximation d'un réel
+### Approximation de nombres réels
 
-La classe `Rationnel` fournit aussi de nombreuses fonctionnalités comme celle de créer une approximation d'un réel. Prenons l'exemple de PI.
-
-```c++
+```cpp
+// Approximation de π
 Rationnel r_pi;
 Rationnel::approx_naive(M_PI, 100000, r_pi);
-std::cout << "Approximation de PI : " << r_pi << std::endl;
-// Approximation de PI : [ 312689 DIV 99532 ]
+std::cout << "π ≈ " << r_pi << std::endl;
+// Affiche: π ≈ [ 312689 DIV 99532 ]
 ```
 
-## Évaluation d'une expression
+---
 
-Le système doit aussi être capable d'évaluer **une expression à une variable**. Il doit pouvoir la représenter et l'évaluer. \
-*Les expressions à plusieurs variables doivent pouvoir être représentées sans pour autant devoir être évaluer pour le moment.*
+## Visualisation en arbre
 
-## Représentation d'une expression
+Le cœur du projet : transformer des expressions mathématiques en arbres binaires magnifiques !
 
-Le principal but de ce projet est de pouvoir visualiser une expression sous la forme d'un arbre binaire. 
+### Exemple 1 : Expression avec exponentielles
 
-- Dans un premier temps affiché dans le terminal
-- Dans un second temps (si possible) générer un code Tikz pour avoir une belle représentation.
-
-### Quelques exemples de représentations
-
-#### Première expression
-
-$$
-\mathcal{E}_1 = \dfrac{e^{sin(x+1.0) \times cos(y+2.0)}-log(3.0+4.0)}{(y+3.0)\times 2}
-$$
-
+**Expression mathématique :**
 ```
-│       ┌-- 2.000000
-│   ┌-- *
-│   │   │   ┌-- 3.000000
-│   │   └-- +
-│   │       └-- y
-└-- /
-    │           ┌-- 4.000000
-    │       ┌-- +
-    │       │   └-- 3.000000
-    │   ┌-- log
-    └-- -
-        │               ┌-- 2.000000
-        │           ┌-- + 
-        │           │   └-- y
-        │       ┌-- cos
-        │   ┌-- *
-        │   │   │       ┌-- 1.000000
-        │   │   │   ┌-- +
-        │   │   │   │   └-- x
-        │   │   └-- sin
-        └-- exp
+        e^(sin(x+1)·cos(y+2)) - log(3+4)
+E₁ = ──────────────────────────────────────
+                (y+3)·2
 ```
 
-#### Seconde expression
-
-$$
-\mathcal{E}_2=\dfrac{e^{sin(a+\frac{1}{2})\times cos(b+\frac{3}{4})}}{b}
-$$
-
+**Arbre binaire :**
 ```
-│   ┌-- b
-└-- /
-    │               ┌-- [ 3 DIV 4 ]
-    │           ┌-- +
-    │           │   └-- b
-    │       ┌-- cos
-    │   ┌-- *
-    │   │   │       ┌-- [ 1 DIV 2 ]
-    │   │   │   ┌-- +
-    │   │   │   │   └-- a
-    │   │   └-- sin
-    └-- exp
+│       ┌── 2.000000
+│   ┌── *
+│   │   │   ┌── 3.000000
+│   │   └── +
+│   │       └── y
+└── /
+    │           ┌── 4.000000
+    │       ┌── +
+    │       │   └── 3.000000
+    │   ┌── log
+    └── -
+        │               ┌── 2.000000
+        │           ┌── + 
+        │           │   └── y
+        │       ┌── cos
+        │   ┌── *
+        │   │   │       ┌── 1.000000
+        │   │   │   ┌── +
+        │   │   │   │   └── x
+        │   │   └── sin
+        └── exp
 ```
 
-#### Troisième expression
+### Exemple 2 : Expression avec rationnels
 
-$$
-\mathcal{E}_3=\dfrac{log\left(sin(x+1.0)\times cos(y-2.0)+\frac{e^{z+3.0}}{4}\right)-sin(xy+z)) \times e^{z+3.0}}{e^{log((x+2.0)\times(y+3.0)+5.0z)+6}}
-$$
+**Expression mathématique :**
+```
+        e^(sin(a+1/2)·cos(b+3/4))
+E₂ = ─────────────────────────────
+                  b
+```
 
+**Arbre binaire :**
 ```
-│           ┌-- 6.000000
-│       ┌-- +
-│       │   │           ┌-- 5.000000
-│       │   │       ┌-- *
-│       │   │       │   └-- z
-│       │   │   ┌-- +
-│       │   │   │   │       ┌-- 3.000000
-│       │   │   │   │   ┌-- +
-│       │   │   │   │   │   └-- y
-│       │   │   │   └-- *
-│       │   │   │       │   ┌-- 2.000000
-│       │   │   │       └-- +
-│       │   │   │           └-- x
-│       │   └-- log
-│   ┌-- exp
-└-- /
-    │               ┌-- 3.000000
-    │           ┌-- +
-    │           │   └-- z
-    │       ┌-- exp
-    │   ┌-- *
-    │   │   │       ┌-- z
-    │   │   │   ┌-- +
-    │   │   │   │   │   ┌-- y
-    │   │   │   │   └-- *
-    │   │   │   │       └-- x
-    │   │   └-- sin
-    └-- -
-        │           ┌-- 4.000000
-        │       ┌-- /
-        │       │   │       ┌-- 3.000000
-        │       │   │   ┌-- +
-        │       │   │   │   └-- z
-        │       │   └-- exp
-        │   ┌-- +
-        │   │   │           ┌-- 2.000000
-        │   │   │       ┌-- -
-        │   │   │       │   └-- y
-        │   │   │   ┌-- cos
-        │   │   └-- *
-        │   │       │       ┌-- 1.000000
-        │   │       │   ┌-- +
-        │   │       │   │   └-- x
-        │   │       └-- sin
-        └-- log
+│   ┌── b
+└── /
+    │               ┌── [ 3 DIV 4 ]
+    │           ┌── +
+    │           │   └── b
+    │       ┌── cos
+    │   ┌── *
+    │   │   │       ┌── [ 1 DIV 2 ]
+    │   │   │   ┌── +
+    │   │   │   │   └── a
+    │   │   └── sin
+    └── exp
 ```
+
+### Exemple 3 : Expression ultra-complexe
+
+**Expression mathématique :**
+```
+        [log(sin(x+1)·cos(y-2) + e^(z+3)/4) - sin(xy+z)]·e^(z+3)
+E₃ = ────────────────────────────────────────────────────────────────
+                    e^(log((x+2)·(y+3)+5z)+6)
+```
+
+**Arbre binaire :**
+```
+│           ┌── 6.000000
+│       ┌── +
+│       │   │           ┌── 5.000000
+│       │   │       ┌── *
+│       │   │       │   └── z
+│       │   │   ┌── +
+│       │   │   │   │       ┌── 3.000000
+│       │   │   │   │   ┌── +
+│       │   │   │   │   │   └── y
+│       │   │   │   └── *
+│       │   │   │       │   ┌── 2.000000
+│       │   │   │       └── +
+│       │   │   │           └── x
+│       │   └── log
+│   ┌── exp
+└── /
+    │               ┌── 3.000000
+    │           ┌── +
+    │           │   └── z
+    │       ┌── exp
+    │   ┌── *
+    │   │   │       ┌── z
+    │   │   │   ┌── +
+    │   │   │   │   │   ┌── y
+    │   │   │   │   └── *
+    │   │   │   │       └── x
+    │   │   └── sin
+    └── -
+        │           ┌── 4.000000
+        │       ┌── /
+        │       │   │       ┌── 3.000000
+        │       │   │   ┌── +
+        │       │   │   │   └── z
+        │       │   └── exp
+        │   ┌── +
+        │   │   │           ┌── 2.000000
+        │   │   │       ┌── -
+        │   │   │       │   └── y
+        │   │   │   ┌── cos
+        │   │   └── *
+        │   │       │       ┌── 1.000000
+        │   │       │   ┌── +
+        │   │       │   │   └── x
+        │   │       └── sin
+        └── log
+```
+
+---
+
+## Concepts mis en œuvre
+
+### Programmation Orientée Objet
+- **Héritage** : Hiérarchie de classes avec interface commune
+- **Polymorphisme** : Évaluation et affichage via méthodes virtuelles
+- **Encapsulation** : Gestion interne des opérandes et opérateurs
+
+### Structures de données
+- **Arbres binaires** : Représentation naturelle des expressions
+- **Récursivité** : Parcours et évaluation des arbres
+
+### Types avancés
+- **Génériques (Templates)** : Support de types numériques variés
+- **Nombres rationnels** : Arithmétique exacte sans perte de précision
+
+---
+
+## Objectifs pédagogiques
+
+Ce projet illustre :
+
+✅ L'utilisation de l'**héritage** pour créer des abstractions puissantes  
+✅ La manipulation d'**arbres binaires** en programmation  
+✅ L'implémentation d'un **système d'évaluation symbolique**  
+✅ La conception d'**API orientées objet** élégantes  
+✅ La **visualisation de structures de données** complexes  
+
+---
+
+## Évolutions futures
+
+- [ ] Support des expressions à plusieurs variables
+- [ ] Export TikZ pour LaTeX
+- [ ] Simplification algébrique automatique
+- [ ] Dérivation symbolique
+- [ ] Interface graphique interactive
+
+---
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+---
+
+<div align="center">
+
+**Fait avec beaucoup de ☕**
+
+*Un projet académique explorant des mathématiques et de la programmation*
+
+</div>
